@@ -1,0 +1,71 @@
+<!doctype HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name='viewport', content='width=device-width,initial-scale=1,maximum-scale=1'>
+    <title>Text to Speech</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <style>
+      #container {
+        margin: 10% auto;
+        width: 400px;
+      }
+      #container * {
+        display: block;
+        clear: both;
+      }
+      #mytext {
+        width: 100%;
+        border: 1px solid #666;
+      }
+      #mybutton {
+        width: 100px;
+        margin: 30px auto;
+      }
+      #output {
+        width: 100%;
+        height: 50px;
+        border: 1px solid #aaa;
+      }
+
+    </style>
+  </head>
+  <body>
+    <section id="container">
+      <input type="text" id="mytext">
+      <input type="button" id="mybutton" value="Play">
+      <textarea id="output" style="visibility:hidden"></textarea>
+      <audio autoplay="autoplay" type="audio/wav">
+        Your browser sucks.  Download Chrome, Firefox or Opera.
+      </audio>
+    </section>
+  </body>
+  <script>
+    $('#mybutton').on('click', function () {
+      $('#output').val($('#mytext').val().toString());
+
+      var stringIn = {"text": $('#mytext').val().toString()};
+
+      var myxhr = $.ajax({
+          contentType: 'application/json; charset=UTF-8',
+          type: 'POST',
+          dataType: 'json',
+          data: JSON.stringify(stringIn)
+        })
+        .done(function (data, textStatus, jqXHR) {
+          $('#output').val(JSON.stringify(data) + '\n' + textStatus + '\n');
+          $('audio').attr('src','/tmp/'+ data.filename);
+        })
+        .fail(function (data, textStatus, jqXHR) {
+          $('#output').val(data + '\n');
+          $('#output').val(textStatus + '\n');
+          $('#output').val(jqXHR + '\n');
+        })
+        .always(function (data, textStatus, jqXHR) {
+          //$('#output').val(textStatus + '\n');
+        });
+
+
+    });
+  </script>
+</html>
